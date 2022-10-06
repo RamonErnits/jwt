@@ -1,5 +1,6 @@
-const mongoose = require("mongoose");
+const mongoose  = require('mongoose');
 const Schema = mongoose.Schema;
+const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
     name: {
@@ -16,10 +17,11 @@ const userSchema = new Schema({
     },
 });
 
-// userSchema.pre("save", function (next) {
-//     const salt = bcrypt.genSaltSync(10);
-//     this.password = bcrypt.hashSync(this.password, salt);
-//     next();
-// });
+userSchema.pre('save', async function(next){
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(this.password, salt)
+    next();
+});
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model('User', userSchema);
+module.exports = User;
